@@ -17,10 +17,5 @@ jobs:
         with:
           node-version: '20'  # or any recent version you want
 
-      - name: Generate dummy package.json
-        run: |
-          echo '{ "name": "dummy", "version": "1.0.0", "scripts": { "test": "echo Test successful!" } }' > package.json
-          npm install
-
       - name: Run tests
         run: npm test
