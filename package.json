@@ -1,0 +1,12 @@
+{
+  "name": "ci-test-project",
+  "version": "1.0.0",
+  "description": "Dummy Node.js project for CI test",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Test success!\" && exit 0"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}
