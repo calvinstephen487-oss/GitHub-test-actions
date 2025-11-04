@@ -1,4 +1,4 @@
-name: Release Library/Package
+name: Release Node.js Package
 
 on:
   push:
@@ -8,68 +8,25 @@ on:
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      # Detect if Gradle IntelliJ project
-      - name: Set up Java
-        if: exists('gradlew') || exists('build.gradle') || exists('build.gradle.kts')
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: gradle
-
-      - name: Build Gradle project
-        if: exists('gradlew') || exists('build.gradle') || exists('build.gradle.kts')
-        run: ./gradlew build
-
-      - name: Archive Gradle artifacts
-        if: exists('gradlew') || exists('build.gradle') || exists('build.gradle.kts')
-        run: mkdir -p release && cp build/libs/*.jar release/
-
-      # Detect if Python project with build file
-      - name: Set up Python
-        if: exists('setup.py') || exists('pyproject.toml')
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-
-      - name: Install Python build tool
-        if: exists('setup.py') || exists('pyproject.toml')
-        run: pip install build
-
-      - name: Build Python package
-        if: exists('setup.py') || exists('pyproject.toml')
-        run: python -m build
-
-      - name: Archive Python artifacts
-        if: exists('setup.py') || exists('pyproject.toml')
-        run: mkdir -p release && cp dist/* release/
-
-      # Detect if Node.js project by checking package.json
       - name: Set up Node.js
-        if: exists('package.json')
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install Node.js dependencies
-        if: exists('package.json')
+      - name: Install dependencies
         run: npm install
 
-      - name: Build Node.js project
-        if: exists('package.json')
-        run: npm run build || echo "No build script, skipping"
+      - name: Build project
+        run: npm run build
 
-      - name: Archive Node.js artifacts
-        if: exists('package.json')
-        run: mkdir -p release && cp -r dist/* release/
+      - name: Archive build artifacts
+        run: mkdir release && cp -r dist/* release/
 
-      # Create GitHub Release
-      - name: Create GitHub Release
+      - name: GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: release/*
